@@ -224,3 +224,16 @@ BaseQuery
 | sort by TotalBytes desc
 | limit 10
 ```
+# Azure Workbook - Subscription parameter
+
+```kql
+Table
+// filters...
+| distinct subscriptionId
+| join kind = inner(
+  resourcecontainers
+  | where type == 'microsoft.resources/subscriptions'
+  | project subscriptionId, subscriptionName=name)
+  on subscriptionId
+```
+
