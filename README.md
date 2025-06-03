@@ -235,5 +235,6 @@ Table
   | where type == 'microsoft.resources/subscriptions'
   | project subscriptionId, subscriptionName=name)
   on subscriptionId
+| project value = subscriptionId, label=subscriptionName
 ```
 
