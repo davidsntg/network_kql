@@ -237,4 +237,17 @@ Table
   on subscriptionId
 | project value = subscriptionId, label=subscriptionName
 ```
+# Private DNS Zones (without Records) Links per VNet
 
+```kql
+resources
+| where type == "microsoft.network/privatednszones/virtualnetworklinks"
+| extend parentZoneId = tostring(split(id, '/virtualNetworkLinks/')[0])
+| join kind=leftouter (resources
+| where type == "microsoft.network/privatednszones"
+| project parentZoneId = id, numberOfRecordSets=tostring(properties.numberOfRecordSets)) on parentZoneId
+| project parentZoneId, numberOfRecordSets, VNetID=tostring(properties.virtualNetwork.id)
+| where numberOfRecordSets == 1
+| summarize EmptyPDZC = count() by VNetID
+| order by EmptyPDZC desc
+```
